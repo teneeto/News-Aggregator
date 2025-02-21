@@ -1,8 +1,9 @@
-"use client"; // ✅ Fix: Ensure this file runs as a client component
+"use client";
 
 import { useState } from "react";
 import { useNews } from "../hooks/useNews";
-import Link from "next/link"; // Import Link
+import Navbar from "../components/Navbar";
+import NewsCard from "../components/NewsCard";
 
 export default function Home() {
   const [query, setQuery] = useState("technology");
@@ -10,7 +11,7 @@ export default function Home() {
 
   return (
     <div>
-      <h1>News Aggregator</h1>
+      <Navbar />
       <input
         type="text"
         placeholder="Search news..."
@@ -21,43 +22,42 @@ export default function Home() {
       {error && <p>Error fetching news</p>}
 
       <h2>NewsAPI Articles</h2>
-      <ul>
+      <div>
         {data?.newsAPI?.map((article: any, index: number) => (
-          <li key={index}>
-            <Link href={`/news/${article.title}`}>
-              {" "}
-              {/* Updated Link */}
-              {article.title}
-            </Link>
-          </li>
+          <NewsCard
+            key={index}
+            title={article.title}
+            description={article.description || "No description available."}
+            link={`/news/${encodeURIComponent(article.title)}`}
+          />
         ))}
-      </ul>
+      </div>
 
       <h2>The Guardian Articles</h2>
-      <ul>
+      <div>
         {data?.guardianAPI?.map((article: any, index: number) => (
-          <li key={index}>
-            <Link href={`/news/${article.webTitle}`}>
-              {" "}
-              {/* Updated Link */}
-              {article.webTitle}
-            </Link>
-          </li>
+          <NewsCard
+            key={index}
+            title={article.webTitle}
+            description={
+              article.fields?.trailText || "No description available."
+            }
+            link={`/news/${encodeURIComponent(article.webTitle)}`}
+          />
         ))}
-      </ul>
+      </div>
 
       <h2>New York Times Articles</h2>
-      <ul>
+      <div>
         {data?.nytimesAPI?.map((article: any, index: number) => (
-          <li key={index}>
-            <Link href={`/news/${article.headline.main}`}>
-              {" "}
-              {/* Updated Link */}
-              {article.headline.main}
-            </Link>
-          </li>
+          <NewsCard
+            key={index}
+            title={article.headline.main}
+            description={article.abstract || "No description available."}
+            link={`/news/${encodeURIComponent(article.headline.main)}`}
+          />
         ))}
-      </ul>
+      </div>
     </div>
   );
 }
