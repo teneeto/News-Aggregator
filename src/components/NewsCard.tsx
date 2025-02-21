@@ -11,9 +11,7 @@ const NewsCard = ({ title, description, link }: NewsCardProps) => {
     <div className="news-card">
       <h3>{title}</h3>
       <p>{description}</p>
-      <Link href={link}>
-        <a>Read more</a>
-      </Link>
+      <Link href={link}>Read more</Link>
     </div>
   );
 };
