@@ -51,7 +51,7 @@ export const fetchGuardianAPI = async (
           title: article.webTitle || "No title available",
           description: article.fields?.trailText || "No description available.",
           content: article.fields?.bodyText || "No content available.",
-          urlToImage: article.fields?.thumbnail || "default-image.jpg",
+          urlToImage: article.fields?.thumbnail,
         })
       );
     return transformedResults;
@@ -83,9 +83,9 @@ export const fetchNYTimesAPI = async (
           title: article.headline?.main || "No title available",
           description: article.snippet || "No description available.",
           content: article.lead_paragraph || "No content available.",
-          urlToImage: article.multimedia?.[0]?.url
-            ? `https://static01.nyt.com/${article.multimedia[0].url}`
-            : "default-image.jpg",
+          urlToImage:
+            article.multimedia?.[0]?.url ??
+            `https://static01.nyt.com/${article.multimedia[0].url}`,
         })
       );
     return transformedResults;

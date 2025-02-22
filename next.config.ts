@@ -3,7 +3,20 @@ import type { NextConfig } from "next";
 const nextConfig: NextConfig = {
   /* config options here */
   images: {
-    domains: ["static01.nyt.com"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "**.nyt.com",
+      },
+      {
+        protocol: "https",
+        hostname: "media.wired.com",
+      },
+      {
+        protocol: "https",
+        hostname: "gizmodo.com",
+      },
+    ],
   },
 };
 
