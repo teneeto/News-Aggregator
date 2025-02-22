@@ -39,7 +39,7 @@ export const fetchGuardianAPI = async (query: string) => {
         title: article.webTitle || "No title available",
         description: article.fields?.trailText || "No description available.",
         content: article.fields?.bodyText || "No content available.",
-        image: article.fields?.thumbnail || "default-image.jpg",
+        urlToImage: article.fields?.thumbnail || "default-image.jpg",
         date: article.webPublicationDate || "No date available",
       })
     );
@@ -66,7 +66,7 @@ export const fetchNYTimesAPI = async (query: string) => {
         title: article.headline?.main || "No title available", // Mapping headline.main to title
         description: article.snippet || "No description available.",
         content: article.lead_paragraph || "No content available.",
-        image: article.multimedia?.[0]?.url
+        urlToImage: article.multimedia?.[0]?.url
           ? `https://static01.nyt.com/${article.multimedia[0].url}`
           : "default-image.jpg", // Fallback image URL
         date: article.pub_date || "No date available",

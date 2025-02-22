@@ -8,6 +8,7 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 export default function Home() {
   const [query, setQuery] = useState("technology");
+  const [page, setPage] = useState(1);
   const { data, isLoading, error } = useNews(query);
 
   return (
@@ -28,14 +29,25 @@ export default function Home() {
         </div>
       </div>
 
-      {/* Breadcrumbs */}
-      <div className="px-6 py-4 text-gray-600">
+      {/* Breadcrumbs & Navigation */}
+      <div className="px-6 py-4 text-gray-600 flex justify-between items-center">
         <nav className="text-sm">
           <span className="cursor-pointer hover:underline">Home</span> /
           <span className="cursor-pointer hover:underline ml-1">
             Search Results
           </span>
         </nav>
+        <div className="space-x-4">
+          <a href="#newsapi" className="text-blue-600 hover:underline">
+            NewsAPI
+          </a>
+          <a href="#guardian" className="text-blue-600 hover:underline">
+            The Guardian
+          </a>
+          <a href="#nytimes" className="text-blue-600 hover:underline">
+            NY Times
+          </a>
+        </div>
       </div>
 
       {/* Articles */}
@@ -48,53 +60,46 @@ export default function Home() {
         )}
 
         {/* NewsAPI Section */}
-        <div>
+        <div id="newsapi">
           <h2 className="text-2xl font-semibold mb-4">NewsAPI Articles</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {data?.newsAPI?.map((article, index) => (
-              <NewsCard
-                key={index}
-                title={article.title}
-                description={article.description || "No description available."}
-                link={`/news/${encodeURIComponent(article.title)}`}
-                image={article.urlToImage}
-              />
+              <NewsCard key={index} {...article} />
             ))}
           </div>
         </div>
 
         {/* The Guardian Section */}
-        <div>
+        <div id="guardian">
           <h2 className="text-2xl font-semibold mb-4">The Guardian Articles</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {data?.guardianAPI?.map((article, index) => (
-              <NewsCard
-                key={index}
-                title={article.title}
-                description={article.description || "No description available."}
-                link={`/news/${encodeURIComponent(article.title)}`}
-                image={article.urlToImage}
-              />
+              <NewsCard key={index} {...article} />
             ))}
           </div>
         </div>
 
         {/* NY Times Section */}
-        <div>
+        <div id="nytimes">
           <h2 className="text-2xl font-semibold mb-4">
             New York Times Articles
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {data?.nytimesAPI?.map((article, index) => (
-              <NewsCard
-                key={index}
-                title={article.title}
-                description={article.description || "No description available."}
-                link={`/news/${encodeURIComponent(article.title)}`}
-                image={article.urlToImage}
-              />
+              <NewsCard key={index} {...article} />
             ))}
           </div>
+        </div>
+
+        {/* Pagination */}
+        <div className="text-center mt-8">
+          <button
+            onClick={() => setPage(page + 1)}
+            className="px-6 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
+            disabled={isLoading}
+          >
+            Load More
+          </button>
         </div>
       </div>
     </div>
