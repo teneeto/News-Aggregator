@@ -2,8 +2,8 @@
 
 import { useEffect, useState } from "react";
 import { useParams } from "next/navigation";
-import { fetchNewsDetail } from "../../../services/newsService";
-import { useNewsStore } from "../../../store/useNewsStore";
+import { useNewsStore } from "@/store/useNewsStore";
+import { fetchNewsDetail } from "@/services/newsService";
 
 export default function NewsDetail() {
   const { newsId } = useParams();
@@ -17,6 +17,7 @@ export default function NewsDetail() {
       try {
         setIsLoading(true);
         const fetchedArticle = await fetchNewsDetail(newsId as string);
+
         setArticle(fetchedArticle);
       } catch (err) {
         setError("Failed to load the article.");
@@ -47,6 +48,15 @@ export default function NewsDetail() {
           {article.title}
         </h1>
         <p className="text-gray-600 mb-6">{article.description}</p>
+
+        {article.urlToImage && (
+          <img
+            src={article.urlToImage}
+            alt={article.title}
+            className="w-full h-64 object-cover rounded-lg mb-6"
+          />
+        )}
+
         <div className="text-gray-800 text-lg">{article.content}</div>
       </div>
     </div>

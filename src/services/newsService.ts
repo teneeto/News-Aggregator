@@ -40,7 +40,6 @@ export const fetchGuardianAPI = async (query: string) => {
         description: article.fields?.trailText || "No description available.",
         content: article.fields?.bodyText || "No content available.",
         urlToImage: article.fields?.thumbnail || "default-image.jpg",
-        date: article.webPublicationDate || "No date available",
       })
     );
     return transformedResults;
@@ -63,12 +62,12 @@ export const fetchNYTimesAPI = async (query: string) => {
     });
     const transformedResults = response.data.response.docs.map(
       (article: any) => ({
-        title: article.headline?.main || "No title available", // Mapping headline.main to title
+        title: article.headline?.main || "No title available",
         description: article.snippet || "No description available.",
         content: article.lead_paragraph || "No content available.",
         urlToImage: article.multimedia?.[0]?.url
           ? `https://static01.nyt.com/${article.multimedia[0].url}`
-          : "default-image.jpg", // Fallback image URL
+          : "default-image.jpg",
         date: article.pub_date || "No date available",
       })
     );

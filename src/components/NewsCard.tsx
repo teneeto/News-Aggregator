@@ -1,27 +1,33 @@
 import Link from "next/link";
+import { PhotoIcon } from "@heroicons/react/24/outline";
 
 interface NewsCardProps {
   title: string;
   description: string;
-  link: string;
-  urlToImage?: string; // Optional image
+  urlToImage?: string;
 }
 
-const NewsCard = ({ title, description, link, urlToImage }: NewsCardProps) => {
+const NewsCard = ({ title, description, urlToImage }: NewsCardProps) => {
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
-      {urlToImage && (
+      {urlToImage ? (
         <img
           src={urlToImage}
           alt={title}
-          className="w-full h-48 object-cover"
+          className="w-full h-48 object-cover bg-gray-200"
+          onError={(e) => (e.currentTarget.style.display = "none")}
         />
+      ) : (
+        <div className="w-full h-48 flex items-center justify-center bg-gray-200">
+          <PhotoIcon className="w-16 h-16 text-gray-500" />
+        </div>
       )}
+
       <div className="p-4">
         <h3 className="text-lg font-semibold text-gray-800 mb-2">{title}</h3>
         <p className="text-gray-600 text-sm mb-4">{description}</p>
         <Link
-          href={link || "#"}
+          href={`/news/${encodeURIComponent(title)}`}
           className="text-blue-500 hover:underline text-sm"
         >
           Read more

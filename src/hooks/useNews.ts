@@ -1,6 +1,7 @@
 import { useQuery, UseQueryOptions } from "@tanstack/react-query";
-import { fetchAllNews } from "../services/newsService";
-import { NewsAPIResponse } from "@/types/types";
+
+import { fetchAllNews } from "@/services/newsService";
+import type { NewsAPIResponse } from "@/types/types";
 
 export const useNews = (query: string) => {
   const queryOptions: UseQueryOptions<NewsAPIResponse, Error> = {

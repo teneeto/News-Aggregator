@@ -8,7 +8,6 @@ const Navbar = () => {
         <HomeIcon className="w-6 h-6" />
         <span>News Aggregator</span>
       </Link>
-      <div>{/* Optionally, you can add more nav items */}</div>
     </nav>
   );
 };
