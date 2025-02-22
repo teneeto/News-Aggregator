@@ -1,5 +1,5 @@
-import axios from "axios";
 import { NewsAPIResponse } from "@/types/types";
+import axios from "axios";
 
 // Define API endpoints Keys
 const API_KEYS = {
@@ -18,7 +18,7 @@ const nytimesApiUri =
 export const fetchNewsAPI = async (query: string) => {
   try {
     const response = await axios.get(newsApiUri, {
-      params: { q: query, apiKey: API_KEYS.newsApi },
+      params: { q: query, pageSize: 9, apiKey: API_KEYS.newsApi },
     });
     return response.data.articles;
   } catch (error) {
@@ -31,9 +31,19 @@ export const fetchNewsAPI = async (query: string) => {
 export const fetchGuardianAPI = async (query: string) => {
   try {
     const response = await axios.get(guardianApiUri, {
-      params: { q: query, "api-key": API_KEYS.guardian },
+      params: { q: query, "api-key": API_KEYS.guardian, "page-size": 9 },
     });
-    return response.data.response.results;
+
+    const transformedResults = response.data.response.results.map(
+      (article: any) => ({
+        title: article.webTitle || "No title available",
+        description: article.fields?.trailText || "No description available.",
+        content: article.fields?.bodyText || "No content available.",
+        image: article.fields?.thumbnail || "default-image.jpg",
+        date: article.webPublicationDate || "No date available",
+      })
+    );
+    return transformedResults;
   } catch (error) {
     console.error("Error fetching from Guardian:", error);
     return [];
@@ -44,9 +54,26 @@ export const fetchGuardianAPI = async (query: string) => {
 export const fetchNYTimesAPI = async (query: string) => {
   try {
     const response = await axios.get(nytimesApiUri, {
-      params: { q: query, "api-key": API_KEYS.nytimes },
+      params: {
+        q: query,
+        "api-key": API_KEYS.nytimes,
+        page: 0,
+        num_results: 9,
+      },
     });
-    return response.data.response.docs;
+    const transformedResults = response.data.response.docs.map(
+      (article: any) => ({
+        title: article.headline?.main || "No title available", // Mapping headline.main to title
+        description: article.snippet || "No description available.",
+        content: article.lead_paragraph || "No content available.",
+        image: article.multimedia?.[0]?.url
+          ? `https://static01.nyt.com/${article.multimedia[0].url}`
+          : "default-image.jpg", // Fallback image URL
+        date: article.pub_date || "No date available",
+      })
+    );
+
+    return transformedResults;
   } catch (error) {
     console.error("Error fetching from NYTimes:", error);
     return [];
