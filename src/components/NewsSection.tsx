@@ -1,11 +1,12 @@
 "use client";
 import React from "react";
 import NewsCard from "./NewsCard";
+import { NewsArticle } from "@/types/types";
 
 interface NewsSectionProps {
   id: string;
   title: string;
-  articles: any[]; // You can replace any with a proper type if available
+  articles: NewsArticle[];
 }
 
 const NewsSection: React.FC<NewsSectionProps> = ({ id, title, articles }) => {

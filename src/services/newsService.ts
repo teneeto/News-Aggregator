@@ -44,7 +44,6 @@ export const fetchGuardianAPI = async (
       params: { q: query, "api-key": API_KEYS.guardian, "page-size": 9, page },
     });
 
-    // Transform Guardian results into NewsArticle[]
     const transformedResults: NewsArticle[] =
       response.data.response.results.map(
         (article): NewsArticle => ({
@@ -75,7 +74,6 @@ export const fetchNYTimesAPI = async (
       },
     });
 
-    // Transform NYTimes results into NewsArticle[]
     const transformedResults: NewsArticle[] = response.data.response.docs
       .slice(0, 9)
       .map(
@@ -83,9 +81,9 @@ export const fetchNYTimesAPI = async (
           title: article.headline?.main || "No title available",
           description: article.snippet || "No description available.",
           content: article.lead_paragraph || "No content available.",
-          urlToImage:
-            article.multimedia?.[0]?.url ??
-            `https://static01.nyt.com/${article.multimedia[0].url}`,
+          urlToImage: article.multimedia?.[0]?.url
+            ? `https://static01.nyt.com/${article.multimedia[0].url}`
+            : "null",
         })
       );
     return transformedResults;

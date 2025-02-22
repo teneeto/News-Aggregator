@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { PhotoIcon } from "@heroicons/react/24/outline";
-import Image from "next/image";
+import { isValidUrl } from "@/utils/isValidUrl";
 
 interface NewsCardProps {
   title: string;
@@ -9,23 +9,10 @@ interface NewsCardProps {
 }
 
 const NewsCard = ({ title, description, urlToImage }: NewsCardProps) => {
-  const isValidUrl = (url: string | undefined): boolean => {
-    try {
-      if (!url) return false;
-
-      new URL(url);
-      return true;
-    } catch (error) {
-      console.log(error);
-
-      return false;
-    }
-  };
-
   return (
     <div className="bg-white rounded-lg shadow-lg overflow-hidden hover:shadow-xl transition-shadow duration-300">
       {urlToImage && isValidUrl(urlToImage) ? (
-        <Image
+        <img
           src={urlToImage}
           alt={title}
           className="w-full h-48 object-cover bg-gray-200"

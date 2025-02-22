@@ -18,7 +18,6 @@ export default function Home() {
     isFetchingNextPage,
   } = useNews(query);
 
-  // Combine articles from all fetched pages
   const newsAPIArticles = data?.pages.flatMap((page) => page.newsAPI) || [];
   const guardianArticles =
     data?.pages.flatMap((page) => page.guardianAPI) || [];
