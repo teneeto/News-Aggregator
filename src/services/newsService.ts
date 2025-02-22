@@ -1,23 +1,30 @@
-import { NewsAPIResponse } from "@/types/types";
 import axios from "axios";
+import { NewsAPIResponse, NewsArticle } from "@/types/types";
+import {
+  GuardianResponseData,
+  NewsAPIResponseData,
+  NYTimesResponseData,
+} from "./types";
 
-// Define API endpoints Keys
+// API keys and URIs (no changes)
 const API_KEYS = {
   newsApi: process.env.NEXT_PUBLIC_NEWS_API_KEY,
   guardian: process.env.NEXT_PUBLIC_GUARDIAN_API_KEY,
   nytimes: process.env.NEXT_PUBLIC_NYTIMES_API_KEY,
 };
 
-// Define API URIs
 const newsApiUri = "https://newsapi.org/v2/everything";
 const guardianApiUri = "https://content.guardianapis.com/search";
 const nytimesApiUri =
   "https://api.nytimes.com/svc/search/v2/articlesearch.json";
 
 // Fetch news from NewsAPI with pagination
-export const fetchNewsAPI = async (query: string, page: number = 1) => {
+export const fetchNewsAPI = async (
+  query: string,
+  page: number = 1
+): Promise<NewsArticle[]> => {
   try {
-    const response = await axios.get(newsApiUri, {
+    const response = await axios.get<NewsAPIResponseData>(newsApiUri, {
       params: { q: query, pageSize: 9, page, apiKey: API_KEYS.newsApi },
     });
     return response.data.articles;
@@ -28,20 +35,25 @@ export const fetchNewsAPI = async (query: string, page: number = 1) => {
 };
 
 // Fetch news from The Guardian with pagination
-export const fetchGuardianAPI = async (query: string, page: number = 1) => {
+export const fetchGuardianAPI = async (
+  query: string,
+  page: number = 1
+): Promise<NewsArticle[]> => {
   try {
-    const response = await axios.get(guardianApiUri, {
+    const response = await axios.get<GuardianResponseData>(guardianApiUri, {
       params: { q: query, "api-key": API_KEYS.guardian, "page-size": 9, page },
     });
 
-    const transformedResults = response.data.response.results.map(
-      (article: any) => ({
-        title: article.webTitle || "No title available",
-        description: article.fields?.trailText || "No description available.",
-        content: article.fields?.bodyText || "No content available.",
-        urlToImage: article.fields?.thumbnail || "default-image.jpg",
-      })
-    );
+    // Transform Guardian results into NewsArticle[]
+    const transformedResults: NewsArticle[] =
+      response.data.response.results.map(
+        (article): NewsArticle => ({
+          title: article.webTitle || "No title available",
+          description: article.fields?.trailText || "No description available.",
+          content: article.fields?.bodyText || "No content available.",
+          urlToImage: article.fields?.thumbnail || "default-image.jpg",
+        })
+      );
     return transformedResults;
   } catch (error) {
     console.error("Error fetching from Guardian:", error);
@@ -50,27 +62,32 @@ export const fetchGuardianAPI = async (query: string, page: number = 1) => {
 };
 
 // Fetch news from NYTimes with pagination
-export const fetchNYTimesAPI = async (query: string, page: number = 1) => {
+export const fetchNYTimesAPI = async (
+  query: string,
+  page: number = 1
+): Promise<NewsArticle[]> => {
   try {
-    const response = await axios.get(nytimesApiUri, {
+    const response = await axios.get<NYTimesResponseData>(nytimesApiUri, {
       params: {
         q: query,
         "api-key": API_KEYS.nytimes,
         page,
-        num_results: 9,
       },
     });
-    const transformedResults = response.data.response.docs.map(
-      (article: any) => ({
-        title: article.headline?.main || "No title available",
-        description: article.snippet || "No description available.",
-        content: article.lead_paragraph || "No content available.",
-        urlToImage: article.multimedia?.[0]?.url
-          ? `https://static01.nyt.com/${article.multimedia[0].url}`
-          : "default-image.jpg",
-        date: article.pub_date || "No date available",
-      })
-    );
+
+    // Transform NYTimes results into NewsArticle[]
+    const transformedResults: NewsArticle[] = response.data.response.docs
+      .slice(0, 9)
+      .map(
+        (article): NewsArticle => ({
+          title: article.headline?.main || "No title available",
+          description: article.snippet || "No description available.",
+          content: article.lead_paragraph || "No content available.",
+          urlToImage: article.multimedia?.[0]?.url
+            ? `https://static01.nyt.com/${article.multimedia[0].url}`
+            : "default-image.jpg",
+        })
+      );
     return transformedResults;
   } catch (error) {
     console.error("Error fetching from NYTimes:", error);
@@ -106,7 +123,9 @@ export const fetchAllNews = async (
 };
 
 // Fetch a single news article by its title
-export const fetchNewsDetail = async (newsId: string) => {
+export const fetchNewsDetail = async (
+  newsId: string
+): Promise<NewsArticle | undefined> => {
   const decodedTitle = decodeURIComponent(newsId);
 
   try {
@@ -116,7 +135,7 @@ export const fetchNewsDetail = async (newsId: string) => {
       fetchNYTimesAPI(decodedTitle),
     ]);
 
-    const allArticles = [
+    const allArticles: NewsArticle[] = [
       ...newsArticles[0],
       ...newsArticles[1],
       ...newsArticles[2],
@@ -127,5 +146,6 @@ export const fetchNewsDetail = async (newsId: string) => {
     );
   } catch (error) {
     console.error("Error fetching news detail:", error);
+    return undefined;
   }
 };

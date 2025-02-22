@@ -1,8 +1,8 @@
 export interface NewsArticle {
   title: string;
   description: string;
-  link: string;
-  urlToImage: string;
+  content?: string;
+  urlToImage?: string;
 }
 
 export interface NewsAPIResponse {
