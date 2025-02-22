@@ -1,4 +1,5 @@
 import axios from "axios";
+import { NewsAPIResponse } from "@/types/types";
 
 // Define API endpoints Keys
 const API_KEYS = {
@@ -22,6 +23,7 @@ export const fetchNewsAPI = async (query: string) => {
     return response.data.articles;
   } catch (error) {
     console.error("Error fetching from NewsAPI:", error);
+    return [];
   }
 };
 
@@ -34,6 +36,7 @@ export const fetchGuardianAPI = async (query: string) => {
     return response.data.response.results;
   } catch (error) {
     console.error("Error fetching from Guardian:", error);
+    return [];
   }
 };
 
@@ -46,11 +49,12 @@ export const fetchNYTimesAPI = async (query: string) => {
     return response.data.response.docs;
   } catch (error) {
     console.error("Error fetching from NYTimes:", error);
+    return [];
   }
 };
 
 // Fetch all news sources together
-export const fetchAllNews = async (query: string) => {
+export const fetchAllNews = async (query: string): Promise<NewsAPIResponse> => {
   try {
     const [newsAPI, guardianAPI, nytimesAPI] = await Promise.all([
       fetchNewsAPI(query),
@@ -65,6 +69,11 @@ export const fetchAllNews = async (query: string) => {
     };
   } catch (error) {
     console.error("Error fetching all news:", error);
+    return {
+      newsAPI: [],
+      guardianAPI: [],
+      nytimesAPI: [],
+    };
   }
 };
 
