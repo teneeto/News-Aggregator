@@ -29,22 +29,26 @@ export default function NewsDetail() {
   }, [newsId, setIsLoading, setError]);
 
   if (isLoading) {
-    return <div>Loading...</div>;
+    return <div className="text-center text-gray-600">Loading...</div>;
   }
 
   if (error) {
-    return <div>{error}</div>;
+    return <div className="text-center text-red-500">{error}</div>;
   }
 
   if (!article) {
-    return <div>Article not found.</div>;
+    return <div className="text-center text-gray-600">Article not found.</div>;
   }
 
   return (
-    <div>
-      <h1>{article.title}</h1>
-      <p>{article.description}</p>
-      <div>{article.content}</div>
+    <div className="min-h-screen bg-gray-50 p-8">
+      <div className="max-w-3xl mx-auto bg-white p-6 rounded-lg shadow-lg">
+        <h1 className="text-3xl font-bold text-blue-600 mb-4">
+          {article.title}
+        </h1>
+        <p className="text-gray-600 mb-6">{article.description}</p>
+        <div className="text-gray-800 text-lg">{article.content}</div>
+      </div>
     </div>
   );
 }
