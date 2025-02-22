@@ -19,11 +19,11 @@ export default function Home() {
         onChange={(e) => setQuery(e.target.value)}
       />
       {isLoading && <p>Loading...</p>}
-      {error && <p>Error fetching news</p>}
+      {error && <p>{(error as Error).message}</p>}
 
       <h2>NewsAPI Articles</h2>
       <div>
-        {data?.newsAPI?.map((article: any, index: number) => (
+        {data?.newsAPI?.map((article, index) => (
           <NewsCard
             key={index}
             title={article.title}
@@ -35,26 +35,24 @@ export default function Home() {
 
       <h2>The Guardian Articles</h2>
       <div>
-        {data?.guardianAPI?.map((article: any, index: number) => (
+        {data?.guardianAPI?.map((article, index) => (
           <NewsCard
             key={index}
-            title={article.webTitle}
-            description={
-              article.fields?.trailText || "No description available."
-            }
-            link={`/news/${encodeURIComponent(article.webTitle)}`}
+            title={article.title}
+            description={article.description || "No description available."}
+            link={`/news/${encodeURIComponent(article.title)}`}
           />
         ))}
       </div>
 
       <h2>New York Times Articles</h2>
       <div>
-        {data?.nytimesAPI?.map((article: any, index: number) => (
+        {data?.nytimesAPI?.map((article, index) => (
           <NewsCard
             key={index}
-            title={article.headline.main}
-            description={article.abstract || "No description available."}
-            link={`/news/${encodeURIComponent(article.headline.main)}`}
+            title={article.title}
+            description={article.description || "No description available."}
+            link={`/news/${encodeURIComponent(article.title)}`}
           />
         ))}
       </div>

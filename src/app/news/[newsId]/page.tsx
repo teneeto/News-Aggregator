@@ -1,24 +1,22 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation"; // Updated to use useParams
-import { fetchNewsDetail } from "../../../services/newsService"; // Update path accordingly
+import { useParams } from "next/navigation";
+import { fetchNewsDetail } from "../../../services/newsService";
+import { useNewsStore } from "../../../store/useNewsStore";
 
 export default function NewsDetail() {
-  const { newsId } = useParams(); // Get dynamic route parameter
+  const { newsId } = useParams();
   const [article, setArticle] = useState<any | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const { isLoading, error, setIsLoading, setError } = useNewsStore();
 
   useEffect(() => {
-    if (!newsId) return; // Return early if newsId is not available
+    if (!newsId) return;
 
     const fetchArticle = async () => {
       try {
-        // Ensure newsId is a string, even if it's an array
-        const articleId = Array.isArray(newsId) ? newsId[0] : newsId;
-
-        const fetchedArticle = await fetchNewsDetail(articleId); // Pass as string
+        setIsLoading(true);
+        const fetchedArticle = await fetchNewsDetail(newsId as string);
         setArticle(fetchedArticle);
       } catch (err) {
         setError("Failed to load the article.");
@@ -28,7 +26,7 @@ export default function NewsDetail() {
     };
 
     fetchArticle();
-  }, [newsId]); // Re-run the effect when newsId changes
+  }, [newsId, setIsLoading, setError]);
 
   if (isLoading) {
     return <div>Loading...</div>;
@@ -46,7 +44,7 @@ export default function NewsDetail() {
     <div>
       <h1>{article.title}</h1>
       <p>{article.description}</p>
-      <div>{article.content}</div> {/* Display the full article content */}
+      <div>{article.content}</div>
     </div>
   );
 }
