@@ -8,8 +8,20 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 
 export default function Home() {
   const [query, setQuery] = useState("technology");
-  const [page, setPage] = useState(1);
-  const { data, isLoading, error } = useNews(query);
+  const {
+    data,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useNews(query);
+
+  // Combine articles from all fetched pages
+  const newsAPIArticles = data?.pages.flatMap((page) => page.newsAPI) || [];
+  const guardianArticles =
+    data?.pages.flatMap((page) => page.guardianAPI) || [];
+  const nytimesArticles = data?.pages.flatMap((page) => page.nytimesAPI) || [];
 
   return (
     <div className="bg-gray-100 min-h-screen">
@@ -63,7 +75,7 @@ export default function Home() {
         <div id="newsapi">
           <h2 className="text-2xl font-semibold mb-4">NewsAPI Articles</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data?.newsAPI?.map((article, index) => (
+            {newsAPIArticles.map((article, index) => (
               <NewsCard key={index} {...article} />
             ))}
           </div>
@@ -73,7 +85,7 @@ export default function Home() {
         <div id="guardian">
           <h2 className="text-2xl font-semibold mb-4">The Guardian Articles</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data?.guardianAPI?.map((article, index) => (
+            {guardianArticles.map((article, index) => (
               <NewsCard key={index} {...article} />
             ))}
           </div>
@@ -85,7 +97,7 @@ export default function Home() {
             New York Times Articles
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {data?.nytimesAPI?.map((article, index) => (
+            {nytimesArticles.map((article, index) => (
               <NewsCard key={index} {...article} />
             ))}
           </div>
@@ -93,13 +105,17 @@ export default function Home() {
 
         {/* Pagination */}
         <div className="text-center mt-8">
-          <button
-            onClick={() => setPage(page + 1)}
-            className="px-6 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
-            disabled={isLoading}
-          >
-            Load More
-          </button>
+          {hasNextPage ? (
+            <button
+              onClick={() => fetchNextPage()}
+              className="px-6 py-2 bg-blue-500 text-white font-semibold rounded-md hover:bg-blue-600"
+              disabled={isFetchingNextPage}
+            >
+              {isFetchingNextPage ? "Loading more..." : "Load More"}
+            </button>
+          ) : (
+            <p>No more articles</p>
+          )}
         </div>
       </div>
     </div>

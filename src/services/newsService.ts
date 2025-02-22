@@ -14,11 +14,11 @@ const guardianApiUri = "https://content.guardianapis.com/search";
 const nytimesApiUri =
   "https://api.nytimes.com/svc/search/v2/articlesearch.json";
 
-// Fetch news from NewsAPI
-export const fetchNewsAPI = async (query: string) => {
+// Fetch news from NewsAPI with pagination
+export const fetchNewsAPI = async (query: string, page: number = 1) => {
   try {
     const response = await axios.get(newsApiUri, {
-      params: { q: query, pageSize: 9, apiKey: API_KEYS.newsApi },
+      params: { q: query, pageSize: 9, page, apiKey: API_KEYS.newsApi },
     });
     return response.data.articles;
   } catch (error) {
@@ -27,11 +27,11 @@ export const fetchNewsAPI = async (query: string) => {
   }
 };
 
-// Fetch news from The Guardian
-export const fetchGuardianAPI = async (query: string) => {
+// Fetch news from The Guardian with pagination
+export const fetchGuardianAPI = async (query: string, page: number = 1) => {
   try {
     const response = await axios.get(guardianApiUri, {
-      params: { q: query, "api-key": API_KEYS.guardian, "page-size": 9 },
+      params: { q: query, "api-key": API_KEYS.guardian, "page-size": 9, page },
     });
 
     const transformedResults = response.data.response.results.map(
@@ -49,14 +49,14 @@ export const fetchGuardianAPI = async (query: string) => {
   }
 };
 
-// Fetch news from New York Times
-export const fetchNYTimesAPI = async (query: string) => {
+// Fetch news from NYTimes with pagination
+export const fetchNYTimesAPI = async (query: string, page: number = 1) => {
   try {
     const response = await axios.get(nytimesApiUri, {
       params: {
         q: query,
         "api-key": API_KEYS.nytimes,
-        page: 0,
+        page,
         num_results: 9,
       },
     });
@@ -71,7 +71,6 @@ export const fetchNYTimesAPI = async (query: string) => {
         date: article.pub_date || "No date available",
       })
     );
-
     return transformedResults;
   } catch (error) {
     console.error("Error fetching from NYTimes:", error);
@@ -79,13 +78,16 @@ export const fetchNYTimesAPI = async (query: string) => {
   }
 };
 
-// Fetch all news sources together
-export const fetchAllNews = async (query: string): Promise<NewsAPIResponse> => {
+// Fetch all news sources together with pagination
+export const fetchAllNews = async (
+  query: string,
+  page: number
+): Promise<NewsAPIResponse> => {
   try {
     const [newsAPI, guardianAPI, nytimesAPI] = await Promise.all([
-      fetchNewsAPI(query),
-      fetchGuardianAPI(query),
-      fetchNYTimesAPI(query),
+      fetchNewsAPI(query, page),
+      fetchGuardianAPI(query, page),
+      fetchNYTimesAPI(query, page),
     ]);
 
     return {
